@@ -75,7 +75,6 @@ int main() {
 	test("bar", 0);
 	printf("Done inserting, all pass!\n");
 
-
 	return 0;
 }
 

@@ -1,12 +1,22 @@
 .PHONY: all
 
-SRC = impl.c
-ELF = impl
+LIBS  = 
+CFLAGS = -Wno-parentheses -Wno-format
+LDFLAGS = 
 
-all: $(ELF)
+SRC=$(wildcard *.c)
+OBJ=$(SRC:.c=.o)
 
-$(ELF): $(SRC)
-	clang -Wno-parentheses -Wno-format $(SRC) -o $(ELF)
+all: impl
 
-clean: 
+%.o: %.c
+	gcc -o $@ -c $^ $(CFLAGS) $(LIBS)
+	
+impl: $(OBJ)
+	gcc -o $@ $^ $(LDFLAGS)
+
+clean-lib: $(OBJ)
+	rm $^
+
+clean: clean-lib
 	rm impl
