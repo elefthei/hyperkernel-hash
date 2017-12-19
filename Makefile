@@ -15,8 +15,8 @@ all: impl
 impl: $(OBJ)
 	gcc -o $@ $^ $(LDFLAGS)
 
-clean-lib: $(OBJ)
-	rm $^
+clean-lib:
+	-rm *.o
 
 clean: clean-lib
 	rm impl

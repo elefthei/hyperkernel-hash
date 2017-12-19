@@ -1,16 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<assert.h>
-
-#ifndef HYBRID_HASH_IMPL
-#define HYBRID_HASH_IMPL
-#define HSIZE 1024
-
-// Define linked-list chaining as a collision solution
-typedef struct node_t {
-	char *value;
-	struct node_t *next;
-} node_t;
+#include "impl.h"
 
 // Define global table
 node_t table[HSIZE];
@@ -27,9 +18,9 @@ unsigned long hash_str(const char *str)
 }
 
 // Assume a hash-table with a linked-list for collision solving
-// Provide two arguments, the value and the position of the value in the linked-list
-int add(char* value, unsigned int list_pos) {
-	node_t *head = &table[hash_str(value)];
+// Provide three arguments, the key, the value and the position of the value in the linked-list
+int add(char* key, char* value, unsigned int list_pos) {
+	node_t *head = &table[hash_str(key)];
 	node_t *last = NULL;
 
 	// Bounded loop to confirm to first-order logic
@@ -41,7 +32,7 @@ int add(char* value, unsigned int list_pos) {
 
 	// Allocate head if it doesn't exist
 	if (head == NULL){	
-		head = (node_t*) malloc(sizeof(node_t));
+		head = (node_t*) calloc(1, sizeof(node_t));
 	}
 
 	// Assign head's father to point to head
@@ -54,29 +45,36 @@ int add(char* value, unsigned int list_pos) {
 	return 0;
 }
 
-void test(char * s, unsigned int list_pos) {
-	assert(add(s, list_pos) == 0);
-	unsigned long pos = hash_str(s);
-	node_t *elem = &table[pos];
-
-	for(int i = 0; i < list_pos; ++i) {
-		elem = elem->next;
+// Assume a hash-table with a linked-list for collision solving
+// Provide two arguments, the key, and the position of the value in the linked-list
+char* get(char *key, unsigned int list_pos) {
+	node_t *head = &table[hash_str(key)];
+	for (unsigned int i = 0; i < list_pos; ++i) {
+		if (head == NULL) { return NULL; }
+		head = head->next;
 	}
-	assert(elem->value == s);
+	return head->value;
+}
+
+void test(char *key, char * s, unsigned int list_pos) {
+	// add phase
+	assert(add(key, s, list_pos) == 0);
+	// Get phase
+	char *value = get(key, list_pos);
+	// Test phase
+	assert(value == s);
 }
 
 int main() {
 	// Test the implementation
 	printf("Starting hybrid hash table test...\n");
-	test("foo", 0);
-	test("foo", 1);
-	test("foo", 2);
-	test("foo", 3);
-	test("bar", 0);
+	test("foo", "One string", 0);
+	test("foo", "Another string", 1);
+	test("foo", "Yet one more", 2);
+	test("foo", "Maybe the last?", 3);
+	test("bar", "Ah another key!", 0);
 	printf("Done inserting, all pass!\n");
 
 	return 0;
 }
-
-#endif
 
