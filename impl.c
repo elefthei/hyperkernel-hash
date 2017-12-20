@@ -1,10 +1,6 @@
 #include<stdio.h>
-#include<stdlib.h>
 #include<assert.h>
 #include "impl.h"
-
-// Define global table
-node_t table[HSIZE];
 
 // Hash function djb2
 // http://www.cse.yorku.ca/~oz/hash.html
@@ -17,62 +13,56 @@ unsigned long hash_str(const char *str)
 	return hash % HSIZE;
 }
 
-// Assume a hash-table with a linked-list for collision solving
-// Provide three arguments, the key, the value and the position of the value in the linked-list
-int add(char* key, char* value, unsigned int list_pos) {
-	node_t *head = &table[hash_str(key)];
-	node_t *last = NULL;
-
-	// Bounded loop to confirm to first-order logic
-	for (unsigned int i = 0; i < list_pos; ++i) {
-		if (head == NULL) { return -1; }
-		last = head;
-		head = head->next;
+// Assume a hash-table with a array-list for collision solving
+// Provide three arguments, the key, the value and the position of the value in the array-list
+int add(array_t *table, char* key, char* value, unsigned int pos) {
+	array_t row = table[hash_str(key)];
+	if (pos >= row.size) {
+		doubleArray(&row);
 	}
 
-	// Allocate head if it doesn't exist
-	if (head == NULL){	
-		head = (node_t*) calloc(1, sizeof(node_t));
+	if (pos >= row.size) {
+		printf("ERROR: pos to write outside bounds even after doubling the array\n");
+		return -1;
 	}
-
-	// Assign head's father to point to head
-	if (last != NULL){
-		last->next = head;		
-	}
-
-	printf("head is: 0x%x, last is 0x%x\n", head, last);
-	head->value = value;
+	row.val[pos] = value;
 	return 0;
 }
 
-// Assume a hash-table with a linked-list for collision solving
-// Provide two arguments, the key, and the position of the value in the linked-list
-char* get(char *key, unsigned int list_pos) {
-	node_t *head = &table[hash_str(key)];
-	for (unsigned int i = 0; i < list_pos; ++i) {
-		if (head == NULL) { return NULL; }
-		head = head->next;
+// Assume a hash-table with a array-list for collision solving
+// Provide two arguments, the key, and the position of the value in the array-list
+char* get(array_t *table, char *key, unsigned int pos) {
+	array_t row = table[hash_str(key)];
+	if (pos >= row.size) {
+		printf("ERROR: pos outside bounds when fetching from the array\n");
+		return NULL;
 	}
-	return head->value;
+	return row.val[pos];
 }
 
-void test(char *key, char * s, unsigned int list_pos) {
+void test(array_t *table, char *key, char * s, unsigned int pos) {
 	// add phase
-	assert(add(key, s, list_pos) == 0);
+	assert(add(table, key, s, pos) == 0);
 	// Get phase
-	char *value = get(key, list_pos);
+	char *value = get(table, key, pos);
 	// Test phase
 	assert(value == s);
 }
 
 int main() {
+	// Define and init the hash table
+	array_t table[HSIZE];
+	for (int i = 0; i < HSIZE; ++i) {
+		table[i] = makeArray();
+	}
+
 	// Test the implementation
 	printf("Starting hybrid hash table test...\n");
-	test("foo", "One string", 0);
-	test("foo", "Another string", 1);
-	test("foo", "Yet one more", 2);
-	test("foo", "Maybe the last?", 3);
-	test("bar", "Ah another key!", 0);
+	test(table, "foo", "One string", 0);
+	test(table, "foo", "Another string", 1);
+	test(table, "foo", "Yet one more", 2);
+	test(table, "foo", "Maybe the last?", 3);
+	test(table, "bar", "Ah another key!", 0);
 	printf("Done inserting, all pass!\n");
 
 	return 0;
