@@ -1,0 +1,3 @@
+[submodule "hv6"]
+	path = hv6
+	url = https://github.com/locore/hv6.git
