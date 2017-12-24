@@ -2,7 +2,7 @@
 
 CC       = clang-5.0
 MAKE     = make
-CFLAGS   = -g -Wno-parentheses -Wno-format -mno-sse -mno-sse2 -nostdlib -O0
+CFLAGS   = -Wno-parentheses -Wno-format -mno-sse -mno-sse2 -nostdlib -O0
 LDFLAGS  =
 LIBS	 =
 
@@ -14,7 +14,9 @@ PYS		 = o.x86_64/$(SRC:.c=.py)
 all: o.x86_64 o.x86_64/impl irpy $(PYS)
 
 irpy:
-	cd irpy-z3 && $(MAKE) DEBUG=$(DEBUG) compiler/irpy
+	cd irpy-z3 && \
+		$(MAKE) DEBUG=$(DEBUG) compiler/irpy && \
+		cp -r libirpy ../o.x86_64/
 
 o.x86_64/%.py: $(LLS)
 	./irpy-z3/compiler/irpy $^ > $@

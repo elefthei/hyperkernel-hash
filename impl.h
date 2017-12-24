@@ -29,6 +29,8 @@ void doubleArray(array_t *ar) {
 }
 
 // Assume a hash-table with an array-list for collision solving
+void init(array_t *table);
+
 // Add to hash table
 // Provide two arguments, the value and the position of the value in the linked-list
 int add(array_t *table, char* key, char* value, unsigned int pos);

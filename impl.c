@@ -16,28 +16,35 @@ unsigned long hash_str(const char *str)
 // Assume a hash-table with a array-list for collision solving
 // Provide three arguments, the key, the value and the position of the value in the array-list
 int add(array_t *table, char* key, char* value, unsigned int pos) {
-	array_t row = table[hash_str(key)];
-	if (pos >= row.size) {
-		doubleArray(&row);
+	array_t *row = &table[hash_str(key)];
+	if (pos >= row->size) {
+		doubleArray(row);
 	}
 
-	if (pos >= row.size) {
+	if (pos >= row->size) {
 		printf("ERROR: pos to write outside bounds even after doubling the array\n");
 		return -1;
 	}
-	row.val[pos] = value;
+	row->val[pos] = value;
 	return 0;
 }
 
 // Assume a hash-table with a array-list for collision solving
 // Provide two arguments, the key, and the position of the value in the array-list
 char* get(array_t *table, char *key, unsigned int pos) {
-	array_t row = table[hash_str(key)];
-	if (pos >= row.size) {
+	array_t *row = &table[hash_str(key)];
+	if (pos >= row->size) {
 		printf("ERROR: pos outside bounds when fetching from the array\n");
 		return NULL;
 	}
-	return row.val[pos];
+	return row->val[pos];
+}
+
+void init(array_t *table) {
+	for (int i = 0; i < HSIZE; ++i) {
+		table[i] = makeArray();
+	}
+
 }
 
 void test(array_t *table, char *key, char * s, unsigned int pos) {
@@ -50,11 +57,10 @@ void test(array_t *table, char *key, char * s, unsigned int pos) {
 }
 
 int main() {
+
 	// Define and init the hash table
 	array_t table[HSIZE];
-	for (int i = 0; i < HSIZE; ++i) {
-		table[i] = makeArray();
-	}
+	init(table);
 
 	// Test the implementation
 	printf("Starting hybrid hash table test...\n");
