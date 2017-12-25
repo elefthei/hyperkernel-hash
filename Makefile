@@ -23,7 +23,8 @@ o.x86_64/pyimpl/%.py: $(LLS)
 	./irpy-z3/compiler/irpy $^ > $@
 	
 o.x86_64:
-	mkdir -p o.x86_64/pyimpl
+	mkdir -p $@/pyimpl
+	touch $@/pyimpl/__init__.py
 
 o.x86_64/%.ll: %.c
 	$(CC) $(CFLAGS) -S -emit-llvm -o $@ -c $^ $(LIBS)
@@ -40,7 +41,6 @@ clean-lib:
 
 clean: clean-lib
 	rm -rf o.x86_64
-
 
 
 .SECONDARY: $(LLS)

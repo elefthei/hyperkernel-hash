@@ -351,11 +351,8 @@ class Impl(ImplBase):
         newstate = spec.switch_proc(s, pid)[1]
         self._prove(z3.Exists([pid], spec.state_equiv(self.ctx, newstate)))
 
-    syscalls_generic = _syscalls
-
-
 # Test cases to check if python and c versions of implementation invariants match
-class PyImplInvs(HV6Base):
+class PyImplInvs(ImplBase):
     def setUp(self):
         self.solver = Solver()
         self.solver.set(AUTO_CONFIG=False)
