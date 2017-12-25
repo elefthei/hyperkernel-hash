@@ -35,6 +35,9 @@ o.x86_64/%.o: $(LLS)
 o.x86_64/impl: $(OBJ)
 	$(CC) -o $@ $^ $(LDFLAGS)
 
+verify: all
+	python o.x86_64/main.py
+	
 clean-lib:
 	-rm o.x86_64/*.o
 	-cd irpy-z3 && $(MAKE) clean
