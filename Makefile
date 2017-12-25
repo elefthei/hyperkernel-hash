@@ -9,20 +9,21 @@ LIBS	 =
 SRC		 = $(wildcard *.c)
 OBJ		 = o.x86_64/$(SRC:.c=.o)
 LLS		 = o.x86_64/$(SRC:.c=.ll)
-PYS		 = o.x86_64/$(SRC:.c=.py)
+PYS		 = o.x86_64/pyimpl/$(SRC:.c=.py)
 
 all: o.x86_64 o.x86_64/impl irpy $(PYS)
 
 irpy:
 	cd irpy-z3 && \
 		$(MAKE) DEBUG=$(DEBUG) compiler/irpy && \
-		cp -r libirpy ../o.x86_64/
+		cp -r libirpy ../o.x86_64/ && \
+		cp -r ../spec/* ../o.x86_64/
 
-o.x86_64/%.py: $(LLS)
+o.x86_64/pyimpl/%.py: $(LLS)
 	./irpy-z3/compiler/irpy $^ > $@
 	
 o.x86_64:
-	mkdir -p o.x86_64
+	mkdir -p o.x86_64/pyimpl
 
 o.x86_64/%.ll: %.c
 	$(CC) $(CFLAGS) -S -emit-llvm -o $@ -c $^ $(LIBS)
