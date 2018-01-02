@@ -14,13 +14,13 @@ PYS		 = o.x86_64/pyimpl/$(SRC:.c=.py)
 all: o.x86_64 o.x86_64/impl irpy $(PYS)
 
 irpy:
-	cd irpy-z3 && \
+	cd irpy && \
 		$(MAKE) DEBUG=$(DEBUG) compiler/irpy && \
 		cp -r libirpy ../o.x86_64/ && \
 		cp -r ../spec/* ../o.x86_64/
 
 o.x86_64/pyimpl/%.py: $(LLS)
-	./irpy-z3/compiler/irpy $^ > $@
+	./irpy/compiler/irpy $^ > $@
 	
 o.x86_64:
 	mkdir -p $@/pyimpl
@@ -40,7 +40,7 @@ verify: all
 	
 clean-lib:
 	-rm o.x86_64/*.o
-	-cd irpy-z3 && $(MAKE) clean
+	-cd irpy && $(MAKE) clean
 
 clean: clean-lib
 	rm -rf o.x86_64

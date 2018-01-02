@@ -1,0 +1,7 @@
+*.o
+irpy
+*.pyc
+.idea/
+cmake-build-debug/
+cmake_install.cmake
+o.test

@@ -1,3 +1,0 @@
-[submodule "irpy-z3"]
-	path = irpy-z3
-	url = https://github.com/elefthei/irpy-z3.git
