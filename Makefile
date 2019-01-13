@@ -1,6 +1,6 @@
 .PHONY: irpy all
 
-CC       = clang-5.0
+CC       = clang
 MAKE     = make
 CFLAGS   = -Wno-parentheses -Wno-format -mno-sse -mno-sse2 -nostdlib -O0
 LDFLAGS  =
@@ -21,7 +21,7 @@ irpy:
 
 o.x86_64/pyimpl/%.py: $(LLS)
 	./irpy/compiler/irpy $^ > $@
-	
+
 o.x86_64:
 	mkdir -p $@/pyimpl
 	touch $@/pyimpl/__init__.py
@@ -37,7 +37,7 @@ o.x86_64/impl: $(OBJ)
 
 verify: all
 	python o.x86_64/main.py
-	
+
 clean-lib:
 	-rm o.x86_64/*.o
 	-cd irpy && $(MAKE) clean
